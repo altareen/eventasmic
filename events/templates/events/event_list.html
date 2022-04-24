@@ -1,0 +1,83 @@
+{% extends "events/base_menu.html" %}
+{% block content %}
+<h1><em>"START ME UP!"</em></h1>
+<h2>WNY Startup Community Performance Event</h2>
+<h3>Saturday, April 15, 2023 @ 7:00PM</h3>
+<div style="float:right">
+<!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
+<form>
+  <input type="text" placeholder="Search.." name="search"
+  {% if search %} value="{{ search }}" {% endif %}>
+  <button type="submit"><i class="fa fa-search"></i></button>
+<a href="{% url 'events:all' %}"><i class="fa fa-undo"></i></a>
+</form>
+<p>
+Powered by EventasMic
+</p>
+<img style="width:75%;" src="https://altareen.github.io/assets/logo.png">
+</div>
+<p>
+{% if event_list %}
+<ul>
+  {% for event in event_list %}
+    <li>
+        <a href="{% url 'events:event_detail' event.id %}">
+        <img style="width:5%;" src="{% url 'events:event_picture' event.id %}" align="top">
+        </a>
+        <!-- <b>{{ event.showdate }}: </b> -->
+        <a href="{% url 'events:event_detail' event.id %}"> {{ event.performer }} @ {{ event.venue }}</a> <b>Pledge Goal: </b>${{ event.pledge }}
+        {% if event.owner == user %}
+        (<a href="{% url 'events:event_update' event.id %}">Edit</a> |
+        <a href="{% url 'events:event_delete' event.id %}">Delete</a>)
+        {% endif %}
+        {% if user.is_authenticated %}
+        <!-- Two hrefs with two stacked icons each - one showing and one hidden -->
+        <a href="#" onclick=
+            "favPost('{% url 'events:event_unfavorite' event.id %}', {{ event.id }} );return false;"
+            {% if event.id not in favorites %} style="display: none;" {% endif %}
+            id="favorite_star_{{event.id}}">
+        <span class="fa-stack" style="vertical-align: middle;">
+        <i class="fa fa-star fa-stack-1x" style="color: orange;"></i>
+        <i class="fa fa-star-o fa-stack-1x"></i>
+        </span>
+        </a>
+        <!-- the second href -->
+        <a href="#" onclick=
+             "favPost('{% url 'events:event_favorite' event.id %}', {{ event.id }} );return false;"
+            {% if event.id in favorites %} style="display: none;" {% endif %}
+            id="unfavorite_star_{{event.id}}">
+        <span class="fa-stack" style="vertical-align: middle;">
+        <i class="fa fa-star fa-stack-1x" style="display: none; color: orange;"></i>
+        <i class="fa fa-star-o fa-stack-1x"></i>
+        </span>
+        </a>
+        {% endif %}
+    </li>
+    <br>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no events in the database.</p>
+{% endif %}
+</p>
+<p>
+<a href="{% url 'events:event_create' %}">Create an Event</a> |
+{% if user.is_authenticated %}
+<a href="{% url 'logout' %}?next={% url 'events:all' %}">Logout</a>
+{% else %}
+<a href="{% url 'login' %}?next={% url 'events:all' %}">Login</a>
+{% endif %}
+</p>
+<script>
+function favPost(url, event_id) {
+    console.log('Requesting JSON');
+    $.post(url, {},  function(rowz){
+        console.log(url, 'finished');
+        $("#unfavorite_star_"+event_id).toggle();
+        $("#favorite_star_"+event_id).toggle();
+    }).fail(function(xhr) {
+        alert('Url failed with '+xhr.status+' '+url);
+    });
+}
+</script>
+{% endblock %}

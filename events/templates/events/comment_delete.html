@@ -1,0 +1,13 @@
+{% extends "events/base_menu.html" %}
+{% block content %}
+<h1>Delete Comment</h1>
+
+<p>Are you sure you want to delete</p>
+<p>{{ comment.text }}?</p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit"  class="btn btn-primary" value="Yes, delete.">
+  <a href="{% url 'events:event_detail' comment.event.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
