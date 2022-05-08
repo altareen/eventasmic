@@ -152,5 +152,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if "DYNO" in os.environ:
     STATIC_ROOT = 'static'
-    ALLOWED_HOSTS = ['events-performances.herokuapp.com']
+    ALLOWED_HOSTS = ['eventasmic.herokuapp.com']
     DEBUG = False
